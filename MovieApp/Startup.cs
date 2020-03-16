@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -33,10 +34,11 @@ namespace MovieApp
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             var connection = "Server=(LocalDB)\\MSSQLLocalDB;Database=Movies;Trusted_Connection=true";
             services.AddDbContext<MoviesContext>(options => options.UseSqlServer(connection));
+            services.AddOData();
+
             services.AddCors(options =>
             {
                 options.AddPolicy("LocalPolicy",
@@ -64,7 +66,10 @@ namespace MovieApp
             app.UseStaticFiles();
             app.UseCookiePolicy();
 
-            app.UseMvc();
+            app.UseMvc(routeBuilder => {
+                routeBuilder.EnableDependencyInjection();
+                routeBuilder.Expand().Select().Count().OrderBy().Filter().MaxTop(50);
+            });
         }
     }
 }

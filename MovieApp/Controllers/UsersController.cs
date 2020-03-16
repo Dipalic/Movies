@@ -2,67 +2,66 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNet.OData;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MovieApp;
 using MovieApp.Models;
 
 namespace MovieApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MovieTablesController : ControllerBase
+    public class UsersController : ControllerBase
     {
         private readonly MoviesContext _context;
 
-        public MovieTablesController(MoviesContext context)
+        public UsersController(MoviesContext context)
         {
             _context = context;
         }
 
-        // GET: api/MovieTables
+        // GET: api/Users
         [HttpGet]
-        [EnableQuery()]
-        public IEnumerable<MovieTable> Get()
+        public IEnumerable<Users> GetUsers()
         {
-            return _context.MovieTable;
+            return _context.Users;
         }
 
-        // GET: api/MovieTables/5
+        // GET: api/Users/5
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get([FromRoute] int id)
+        public async Task<IActionResult> GetUsers([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var movieTable = await _context.MovieTable.FindAsync(id);
+            var users = await _context.Users.FindAsync(id);
 
-            if (movieTable == null)
+            if (users == null)
             {
                 return NotFound();
             }
 
-            return Ok(movieTable);
+            return Ok(users);
         }
 
-        // PUT: api/MovieTables/5
-        [HttpPut("{movieId}")]
-        public async Task<IActionResult> Put([FromRoute] int movieId, [FromBody] MovieTable movieTable)
+        // PUT: api/Users/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutUsers([FromRoute] int id, [FromBody] Users users)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (movieId != movieTable.MovieId)
+            if (id != users.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(movieTable).State = EntityState.Modified;
+            _context.Entry(users).State = EntityState.Modified;
 
             try
             {
@@ -70,7 +69,7 @@ namespace MovieApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MovieTableExists(movieId))
+                if (!UsersExists(id))
                 {
                     return NotFound();
                 }
@@ -80,48 +79,50 @@ namespace MovieApp.Controllers
                 }
             }
 
-            return Ok(movieTable);
+            return NoContent();
         }
 
-        // POST: api/MovieTables
+        // POST: api/Users
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] MovieTable movieTable)
+        public async Task<IActionResult> PostUsers([FromBody] Users users)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            _context.MovieTable.Add(movieTable);
+            _context.Users.Add(users);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("Get", new { id = movieTable.MovieId }, movieTable);
+            return CreatedAtAction("GetUsers", new { id = users.Id }, users);
         }
 
-        // DELETE: api/MovieTables/5
+        // DELETE: api/Users/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete([FromRoute] int id)
+        public async Task<IActionResult> DeleteUsers([FromRoute] int id)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var movieTable = await _context.MovieTable.FindAsync(id);
-            if (movieTable == null)
+            var users = await _context.Users.FindAsync(id);
+            if (users == null)
             {
                 return NotFound();
             }
 
-            _context.MovieTable.Remove(movieTable);
+            _context.Users.Remove(users);
             await _context.SaveChangesAsync();
 
-            return Ok(movieTable);
+            return Ok(users);
         }
 
-        private bool MovieTableExists(int id)
+       
+
+        private bool UsersExists(int id)
         {
-            return _context.MovieTable.Any(e => e.MovieId == id);
+            return _context.Users.Any(e => e.Id == id);
         }
     }
 }

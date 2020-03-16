@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace MovieApp.Models
 {
-    public partial class MovieTable
+    public class MovieTable
     {
         [Key]
         public int MovieId { get; set; }

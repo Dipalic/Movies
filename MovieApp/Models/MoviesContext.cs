@@ -6,12 +6,14 @@ namespace MovieApp.Models
 {
     public partial class MoviesContext : DbContext
     {
+       
         public MoviesContext(DbContextOptions<MoviesContext> options)
             : base(options)
         {
         }
 
         public virtual DbSet<MovieTable> MovieTable { get; set; }
+        public virtual DbSet<Users> Users { get; set; }
 
         /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
